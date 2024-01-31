@@ -21,12 +21,11 @@ export const getAllContacts = async (req, res) => {
 
 export const getOneContact = async (req, res) => {
   const contact = await getContactById(req.params.id);
-
   contact === null
     ? res.status(404).json({ msg: "Not found..." })
     : res.status(200).json({
         message: `Successful getting contact with id ${req.params.id}`,
-        contact,
+        contact: contact[0],
       });
 };
 
@@ -39,7 +38,7 @@ export const deleteContact = async (req, res) => {
       })
     : res.status(200).json({
         message: `Successful deleting contact with id ${req.params.id}`,
-        contact,
+        contact: contact[0],
       });
 };
 
@@ -58,7 +57,7 @@ export const createContact = async (req, res) => {
   const contact = await addContact(name, email, phone);
 
   res.status(201).json({
-    message: "Successfull adding a new contact",
+    message: `Successfull adding a new contact: ${name}`,
     contact,
   });
 };
