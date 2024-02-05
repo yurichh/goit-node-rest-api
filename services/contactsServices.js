@@ -1,13 +1,12 @@
-import fs from "fs/promises";
-import path from "path";
-import { v4 } from "uuid";
-
-const contactsPath = path.join("db", "contacts.json");
+import { Contact } from "../models/contactModel.js";
+import { checkForRepeatEmail } from "../utils/checkForRepeatEmail.js";
 
 export async function listContacts() {
   try {
-    const data = await fs.readFile(contactsPath);
-    return JSON.parse(data);
+    const data = await Contact.find();
+    if (data.length === 0) return null;
+
+    return data;
   } catch (err) {
     console.log(err);
     return;
@@ -16,56 +15,27 @@ export async function listContacts() {
 
 export async function getContactById(contactId) {
   try {
-    const contactList = await listContacts();
-    const contactToFind = contactList.filter(
-      (contact) => contact.id === contactId
-    );
-    if (contactToFind.length === 0) return null;
-    return contactToFind;
+    return await Contact.findById(contactId);
   } catch (err) {
     console.log(err);
-    return;
+    return null;
   }
 }
 
 export async function removeContact(contactId) {
   try {
-    const contactList = await listContacts();
-
-    const newContactList = contactList.filter(
-      (contact) => contact.id !== contactId
-    );
-
-    const contactToRemove = contactList.filter(
-      (contact) => contact.id === contactId
-    );
-
-    if (newContactList.length === 0 || contactToRemove.length === 0)
-      return null;
-
-    fs.writeFile(contactsPath, JSON.stringify(newContactList));
-    return contactToRemove;
+    return await Contact.findByIdAndDelete(contactId);
   } catch (err) {
     console.log(err);
-    return;
+    return null;
   }
 }
 
-export async function addContact(name, email, phone) {
+export async function addContact(newContact) {
   try {
-    const contactList = await listContacts();
+    if (await checkForRepeatEmail(newContact.email)) return null;
 
-    const contactToAdd = {
-      id: v4(),
-      name,
-      email,
-      phone,
-    };
-
-    contactList.push(contactToAdd);
-
-    fs.writeFile(contactsPath, JSON.stringify(contactList));
-    return contactToAdd;
+    return await Contact.create({ ...newContact });
   } catch (err) {
     console.log(err);
     return;
@@ -74,18 +44,22 @@ export async function addContact(name, email, phone) {
 
 export async function updateContactInfo(id, newContactData) {
   try {
-    const contactList = await listContacts();
-    const contactToUpdate = contactList.filter((contact) => contact.id === id);
-
-    if (contactToUpdate.length === 0) return null;
-    const updatedContact = { ...contactToUpdate[0], ...newContactData };
-
-    await removeContact(id);
-
-    const { name, email, phone } = updatedContact;
-    return addContact(name, email, phone);
+    return await Contact.findByIdAndUpdate(id, newContactData, {
+      new: true,
+    });
   } catch (err) {
     console.log(err);
-    return;
+    return null;
+  }
+}
+
+export async function updateContactStatus(id, newContactStatus) {
+  try {
+    return await Contact.findByIdAndUpdate(id, newContactStatus, {
+      new: true,
+    });
+  } catch (err) {
+    console.log(err);
+    return null;
   }
 }
