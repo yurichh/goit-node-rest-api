@@ -2,6 +2,10 @@ import { model, Schema } from "mongoose";
 
 export const contactSchema = new Schema(
   {
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
     name: {
       type: String,
       required: [true, "Set name for contact"],
@@ -20,6 +24,6 @@ export const contactSchema = new Schema(
   { versionKey: false }
 );
 
-const Contact = model("Contact", contactSchema);
+export const Contact = model("Contact", contactSchema);
 
-export { Contact };
+

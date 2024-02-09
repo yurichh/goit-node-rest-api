@@ -1,20 +1,12 @@
-import {
-  createContactSchema,
-  updateContactSchema,
-  updateStatusSchema,
-} from "../schemas/contactsSchemas.js";
-import {
-  addContact,
-  getContactById,
-  listContacts,
-  removeContact,
-  updateContactInfo,
-  updateContactStatus,
-} from "../services/contactsServices.js";
+import { contactsSchemas } from "../schemas/index.js";
+import { contactsServices } from "../services/index.js";
 import { catchAsync } from "../utils/catchAsync.js";
 
+const { updateContactSchema, createContactSchema, updateStatusSchema } =
+  contactsSchemas;
+
 export const getAllContacts = catchAsync(async (req, res) => {
-  const contacts = await listContacts();
+  const contacts = await contactsServices.listContacts();
   contacts === null
     ? res.status(400).json({
         message: `No contacts here...`,
@@ -26,7 +18,7 @@ export const getAllContacts = catchAsync(async (req, res) => {
 });
 
 export const getOneContact = catchAsync(async (req, res) => {
-  const contact = await getContactById(req.params.id);
+  const contact = await contactsServices.getContactById(req.params.id);
 
   contact === null
     ? res.status(404).json({ msg: "Not found..." })
@@ -37,7 +29,7 @@ export const getOneContact = catchAsync(async (req, res) => {
 });
 
 export const deleteContact = catchAsync(async (req, res) => {
-  const contact = await removeContact(req.params.id);
+  const contact = await contactsServices.removeContact(req.params.id);
 
   contact === null
     ? res.status(404).json({
@@ -57,7 +49,7 @@ export const createContact = catchAsync(async (req, res) => {
     });
     return;
   }
-  const contact = await addContact(req.body);
+  const contact = await contactsServices.addContact(req.body);
 
   contact === null
     ? res.status(400).json({
@@ -86,7 +78,7 @@ export const updateContact = catchAsync(async (req, res) => {
     return;
   }
 
-  const updatedContact = await updateContactInfo(
+  const updatedContact = await contactsServices.updateContactInfo(
     req.params.id,
     updatedContactData
   );
@@ -112,7 +104,10 @@ export const updateStatusContact = catchAsync(async (req, res) => {
     return;
   }
 
-  const updatedContact = await updateContactStatus(req.params.id, req.body);
+  const updatedContact = await contactsServices.updateContactStatus(
+    req.params.id,
+    req.body
+  );
 
   if (updatedContact === null) {
     res.status(404).json({ message: "Not found" });
