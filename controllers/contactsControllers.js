@@ -1,9 +1,5 @@
-import { contactsSchemas } from "../schemas/index.js";
 import { contactsServices } from "../services/index.js";
 import { catchAsync } from "../utils/catchAsync.js";
-
-const { updateContactSchema, createContactSchema, updateStatusSchema } =
-  contactsSchemas;
 
 export const getAllContacts = catchAsync(async (req, res) => {
   const contacts = await contactsServices.listContacts();
@@ -42,41 +38,16 @@ export const deleteContact = catchAsync(async (req, res) => {
 });
 
 export const createContact = catchAsync(async (req, res) => {
-  const validationResult = createContactSchema.validate(req.body);
-  if (validationResult.error) {
-    res.status(400).json({
-      message: validationResult.error.message,
-    });
-    return;
-  }
   const contact = await contactsServices.addContact(req.body);
 
-  contact === null
-    ? res.status(400).json({
-        message: `You tried to add an existing contact`,
-      })
-    : res.status(201).json({
-        message: `Successfull adding a new contact: ${req.body.name}`,
-        contact,
-      });
+  res.status(201).json({
+    message: `Successfull adding a new contact: ${req.body.name}`,
+    contact,
+  });
 });
 
 export const updateContact = catchAsync(async (req, res) => {
   const updatedContactData = req.body;
-
-  const validationResult = updateContactSchema.validate(updatedContactData);
-
-  if (validationResult.error) {
-    res.status(400).json({
-      message: validationResult.error.message,
-    });
-    return;
-  }
-
-  if (!req.body.name && !req.body.email && !req.body.phone) {
-    res.status(400).json({ message: "Body must have at least one field" });
-    return;
-  }
 
   const updatedContact = await contactsServices.updateContactInfo(
     req.params.id,
@@ -95,15 +66,6 @@ export const updateContact = catchAsync(async (req, res) => {
 });
 
 export const updateStatusContact = catchAsync(async (req, res) => {
-  const validationResult = updateStatusSchema.validate(req.body);
-
-  if (validationResult.error) {
-    res.status(400).json({
-      message: validationResult.error.message,
-    });
-    return;
-  }
-
   const updatedContact = await contactsServices.updateContactStatus(
     req.params.id,
     req.body
@@ -115,7 +77,7 @@ export const updateStatusContact = catchAsync(async (req, res) => {
   }
 
   res.status(200).json({
-    message: `Successfull updating status contact ${updatedContact.name}`,
+    message: `Successfull updating ${updatedContact.name} status`,
     updatedContact,
   });
 });

@@ -1,11 +1,21 @@
-// import express from "express";
+import express from "express";
+import { userControllers } from "../controllers/index.js";
+import { authMiddleware, userMiddleware } from "../middlewares/index.js";
 
-// export const userRouter = express.Router();
+export const userRouter = express.Router();
 
-// userRouter.post("/register", userRegister);
+userRouter.post(
+  "/register",
+  userMiddleware.validateRegisterUser,
+  userControllers.userRegister
+);
 
-// userRouter.post("/login", userLogin);
+userRouter.post(
+  "/login",
+  userMiddleware.validateLoginUser,
+  userControllers.userLogin
+);
 
-// userRouter.put("/:id", updateContact);
+userRouter.post("/logout", authMiddleware.protect, userControllers.userLogout);
 
-// userRouter.patch("/:id/favorite", updateStatusContact);
+userRouter.get("/current", authMiddleware.protect, userControllers.getUser);

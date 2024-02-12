@@ -1,5 +1,4 @@
 import { Contact } from "../models/contactModel.js";
-import { checkForRepeatEmail } from "../utils/checkForRepeatEmail.js";
 
 export async function listContacts() {
   try {
@@ -33,8 +32,6 @@ export async function removeContact(contactId) {
 
 export async function addContact(newContact) {
   try {
-    if (await checkForRepeatEmail(newContact.email)) return null;
-
     return await Contact.create({ ...newContact });
   } catch (err) {
     console.log(err);
