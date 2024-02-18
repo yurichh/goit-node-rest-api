@@ -27,9 +27,10 @@ export async function loginUser({ email, password }) {
   return { user, token };
 }
 
-export function logoutUser(id) {
-  User.findByIdAndDelete(id);
+export async function logoutUser(id) {
+  await User.findByIdAndDelete(id);
 }
+
 export async function getUserById(userId) {
   return await User.findOne({ _id: userId });
 }

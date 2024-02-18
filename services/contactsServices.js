@@ -1,8 +1,8 @@
 import { Contact } from "../models/contactModel.js";
 
-export async function listContacts() {
+export async function listContacts(owner) {
   try {
-    const data = await Contact.find();
+    const data = await Contact.find({ owner });
     if (data.length === 0) return null;
 
     return data;
@@ -12,17 +12,24 @@ export async function listContacts() {
   }
 }
 
-export async function getContactById(contactId) {
+export async function getContactById(contactId, owner) {
   try {
-    return await Contact.findById(contactId);
+    const contact = await Contact.find({ _id: contactId, owner });
+
+    if (contact.length === 0) return null;
+    return contact;
   } catch (err) {
     console.log(err);
     return null;
   }
 }
 
-export async function removeContact(contactId) {
+export async function removeContact(contactId, owner) {
   try {
+    const contactToDelete = await Contact.find({ _id: contactId, owner });
+
+    if (contactToDelete.length === 0) return null;
+
     return await Contact.findByIdAndDelete(contactId);
   } catch (err) {
     console.log(err);
@@ -30,17 +37,21 @@ export async function removeContact(contactId) {
   }
 }
 
-export async function addContact(newContact) {
+export async function addContact(newContact, owner) {
   try {
-    return await Contact.create({ ...newContact });
+    return await Contact.create({ ...newContact, owner });
   } catch (err) {
     console.log(err);
     return;
   }
 }
 
-export async function updateContactInfo(id, newContactData) {
+export async function updateContactInfo(id, newContactData, owner) {
   try {
+    const contact = await Contact.find({ _id: id, owner });
+
+    if (contact.length === 0) return null;
+
     return await Contact.findByIdAndUpdate(id, newContactData, {
       new: true,
     });
@@ -50,8 +61,12 @@ export async function updateContactInfo(id, newContactData) {
   }
 }
 
-export async function updateContactStatus(id, newContactStatus) {
+export async function updateContactStatus(id, newContactStatus, owner) {
   try {
+    const contact = await Contact.find({ _id: id, owner });
+
+    if (contact.length === 0) return null;
+
     return await Contact.findByIdAndUpdate(id, newContactStatus, {
       new: true,
     });

@@ -14,11 +14,11 @@ export const validateCreatedContact = catchAsync(async (req, res, next) => {
     return;
   }
 
-  const email = req.body.email;
+  const contactList = await Contact.find({ owner: req.user });
 
-  const contactList = await Contact.find();
-
-  if (contactList.filter((contact) => contact.email === email).length > 0) {
+  if (
+    contactList.filter((contact) => contact.email === req.body.email).length > 0
+  ) {
     res.status(409).json({ msg: `User with email **${email}** already exist` });
     return;
   }
