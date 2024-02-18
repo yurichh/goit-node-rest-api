@@ -1,25 +1,30 @@
 import express from "express";
-import {
-  getAllContacts,
-  getOneContact,
-  deleteContact,
-  createContact,
-  updateContact,
-  updateStatusContact,
-} from "../controllers/contactsControllers.js";
+import { contactsControllers } from "../controllers/index.js";
+import { authMiddleware, contactsMiddleware } from "../middlewares/index.js";
 
-const contactsRouter = express.Router();
+export const contactsRouter = express.Router();
+contactsRouter.use(authMiddleware.protect);
 
-contactsRouter.get("/", getAllContacts);
+contactsRouter.get("/", contactsControllers.getAllContacts);
 
-contactsRouter.get("/:id", getOneContact);
+contactsRouter.get("/:id", contactsControllers.getOneContact);
 
-contactsRouter.delete("/:id", deleteContact);
+contactsRouter.delete("/:id", contactsControllers.deleteContact);
 
-contactsRouter.post("/", createContact);
+contactsRouter.post(
+  "/",
+  contactsMiddleware.validateCreatedContact,
+  contactsControllers.createContact
+);
 
-contactsRouter.put("/:id", updateContact);
+contactsRouter.put(
+  "/:id",
+  contactsMiddleware.validateUpdatedContact,
+  contactsControllers.updateContact
+);
 
-contactsRouter.patch("/:id/favorite", updateStatusContact);
-
-export default contactsRouter;
+contactsRouter.patch(
+  "/:id/favorite",
+  contactsMiddleware.validateUpdatedStatus,
+  contactsControllers.updateStatusContact
+);

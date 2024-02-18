@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
-import contactsRouter from "./routes/contactsRouter.js";
+import { contactsRouter, userRouter } from "./routes/index.js";
 
 dotenv.config({ path: "./envs/.env" });
 
@@ -26,6 +26,8 @@ app.use(morgan("dev"));
 app.use(cors());
 
 app.use(express.json());
+
+app.use("/users", userRouter);
 
 app.use("/api/contacts", contactsRouter);
 
