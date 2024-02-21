@@ -39,13 +39,9 @@ export async function updateAvatar(user, file) {
   // Обробка аватарки за допомогою бібліотеки Jimp
   await imageServices.trimAndSaveAvatar(file);
 
-  const updatedPhotoPath = `/avatars/${file.filename}`;
+  user.avatarURL = `/avatars/${file.filename}`;
 
-  return await User.findByIdAndUpdate(
-    user.id,
-    { avatarURL: updatedPhotoPath },
-    {
-      new: true,
-    }
-  );
-}
+  await user.save();
+
+  return user;
+ }

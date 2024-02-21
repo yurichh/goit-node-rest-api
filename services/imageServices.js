@@ -7,6 +7,7 @@ import fs from "fs";
 import { HttpError } from "../utils/index.js";
 
 export const initUploadImage = (name) => {
+  // ініціалізація сховища multer
   const multerStorage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, "tmp/");
@@ -16,6 +17,7 @@ export const initUploadImage = (name) => {
     },
   });
 
+  // Налаштування фільтру multer
   const multerFilter = (req, file, cbk) => {
     if (file.mimetype.startsWith("image/")) {
       cbk(null, true);
@@ -33,6 +35,7 @@ export const initUploadImage = (name) => {
 // Обробка аватарки за допомогою бібліотеки Jimp
 export const trimAndSaveAvatar = async (file) => {
   if (file.size > 2 * 1024 * 1024) {
+    fs.unlinkSync(file.path);
     throw new HttpError(400, "File is too large!");
   }
 
