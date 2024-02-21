@@ -27,8 +27,6 @@ export const userLogin = catchAsync(async (req, res) => {
 });
 
 export const userLogout = catchAsync(async (req, res) => {
-  console.log(req.user.id);
-
   userServices.logoutUser(req.user.id);
   res.status(204).json();
 });
@@ -40,5 +38,16 @@ export const getUser = catchAsync(async (req, res) => {
       email: req.user.email,
       subscription: req.user.subscription,
     },
+  });
+});
+
+export const updateAvatar = catchAsync(async (req, res) => {
+  if (!req.file) return res.status(400).json({ msg: "No file uploaded" });
+
+  const user = await userServices.updateAvatar(req.user, req.file);
+
+  res.status(200).json({
+    msg: "Success updating avatar",
+    user,
   });
 });

@@ -1,4 +1,4 @@
-import { jwtServices } from "./index.js";
+import { imageServices, jwtServices } from "./index.js";
 import { User } from "./../models/userModel.js";
 import { HttpError } from "../utils/index.js";
 
@@ -33,4 +33,19 @@ export async function logoutUser(id) {
 
 export async function getUserById(userId) {
   return await User.findOne({ _id: userId });
+}
+
+export async function updateAvatar(user, file) {
+  // Обробка аватарки за допомогою бібліотеки Jimp
+  await imageServices.trimAndSaveAvatar(file);
+
+  const updatedPhotoPath = `/avatars/${file.filename}`;
+
+  return await User.findByIdAndUpdate(
+    user.id,
+    { avatarURL: updatedPhotoPath },
+    {
+      new: true,
+    }
+  );
 }

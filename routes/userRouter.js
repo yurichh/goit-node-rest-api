@@ -19,3 +19,10 @@ userRouter.post(
 userRouter.post("/logout", authMiddleware.protect, userControllers.userLogout);
 
 userRouter.get("/current", authMiddleware.protect, userControllers.getUser);
+
+userRouter.patch(
+  "/avatars",
+  authMiddleware.protect,
+  userMiddleware.uploadAvatar,
+  userControllers.updateAvatar
+);
