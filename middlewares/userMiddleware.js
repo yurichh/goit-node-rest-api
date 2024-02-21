@@ -1,5 +1,6 @@
 import { User } from "../models/userModel.js";
 import { userSchemas } from "../schemas/index.js";
+import { imageServices } from "../services/index.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { HttpError } from "../utils/httpError.js";
 
@@ -25,3 +26,5 @@ export const validateLoginUser = catchAsync(async (req, res, next) => {
 
   next();
 });
+
+export const uploadAvatar = imageServices.initUploadImage("avatar");
