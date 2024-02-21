@@ -51,3 +51,21 @@ export const updateAvatar = catchAsync(async (req, res) => {
     user,
   });
 });
+
+export const userVerify = catchAsync(async (req, res) => {
+  const { verificationToken } = req.params;
+
+  await userServices.verifyUser(verificationToken, req.user);
+
+  res.status(200).json({
+    msg: "Verification successful",
+  });
+});
+
+export const userVerifyRequest = catchAsync(async (req, res) => {
+  await userServices.verifyRequestUser(req.body.email);
+
+  res.status(200).json({
+    msg: "Verification email sent",
+  });
+});

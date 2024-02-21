@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import crypto from "crypto";
+import { v4 } from "uuid";
 
 const userSchema = new Schema(
   {
@@ -20,6 +21,13 @@ const userSchema = new Schema(
     },
     token: String,
     avatarURL: String,
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -29,6 +37,10 @@ userSchema.pre("save", async function (next) {
     const emailHash = crypto.createHash("md5").update(this.email).digest("hex");
 
     this.avatarURL = `https://www.gravatar.com/avatar/${emailHash}.jpg?d=robohash`;
+
+    const userVerToken = v4();
+
+    this.verificationToken = userVerToken;
   }
   next();
 });

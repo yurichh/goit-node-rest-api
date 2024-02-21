@@ -16,13 +16,22 @@ userRouter.post(
   userControllers.userLogin
 );
 
-userRouter.post("/logout", authMiddleware.protect, userControllers.userLogout);
+userRouter.get("/verify/:verificationToken", userControllers.userVerify);
 
-userRouter.get("/current", authMiddleware.protect, userControllers.getUser);
+userRouter.post(
+  "/verify",
+  userMiddleware.validateVerifyRequestUser,
+  userControllers.userVerifyRequest
+);
+
+userRouter.use(authMiddleware.protect);
+
+userRouter.post("/logout", userControllers.userLogout);
+
+userRouter.get("/current", userControllers.getUser);
 
 userRouter.patch(
   "/avatars",
-  authMiddleware.protect,
   userMiddleware.uploadAvatar,
   userControllers.updateAvatar
 );

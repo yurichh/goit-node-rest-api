@@ -27,4 +27,13 @@ export const validateLoginUser = catchAsync(async (req, res, next) => {
   next();
 });
 
+export const validateVerifyRequestUser = catchAsync(async (req, res, next) => {
+  const validationResult = userSchemas.verifyRequest.validate(req.body);
+
+  if (validationResult.error)
+    throw new HttpError(400, validationResult.error.message);
+
+  next();
+});
+
 export const uploadAvatar = imageServices.initUploadImage("avatar");
