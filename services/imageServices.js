@@ -35,7 +35,7 @@ export const initUploadImage = (name) => {
 // Обробка аватарки за допомогою бібліотеки Jimp
 export const trimAndSaveAvatar = async (file) => {
   if (file.size > 2 * 1024 * 1024) {
-    fs.unlinkSync(file.path);
+    // fs.unlinkSync(file.path);
     throw new HttpError(400, "File is too large!");
   }
 
@@ -43,5 +43,5 @@ export const trimAndSaveAvatar = async (file) => {
   await image.resize(250, 250);
   await image.write(path.join("public", "avatars", `${file.filename}`));
 
-  fs.unlinkSync(file.path);
+  // fs.unlinkSync(file.path);
 };
