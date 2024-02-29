@@ -2,7 +2,6 @@ import multer from "multer";
 import path from "path";
 import Jimp from "jimp";
 import { v4 } from "uuid";
-import fs from "fs";
 
 import { HttpError } from "../utils/index.js";
 
@@ -35,7 +34,6 @@ export const initUploadImage = (name) => {
 // Обробка аватарки за допомогою бібліотеки Jimp
 export const trimAndSaveAvatar = async (file) => {
   if (file.size > 2 * 1024 * 1024) {
-    // fs.unlinkSync(file.path);
     throw new HttpError(400, "File is too large!");
   }
 
